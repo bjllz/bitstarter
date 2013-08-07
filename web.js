@@ -10,7 +10,7 @@ var message=buf.toString();
 console.log(message);
 
 app.get('/', function(request, response) {
-  response.send("Helo!!!");
+	response.send(message);
 });
 
 var port = process.env.PORT || 5000;
