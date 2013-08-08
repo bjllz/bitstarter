@@ -10,15 +10,19 @@ References:
    - https://github.com/MatthewMueller/cheerio
    - http://encosia.com/cheerio-faster-windows-friendly-alternative-jsdom/
    - http://maxogden.com/scraping-with-node.html
-
+   - Cheerio is used to manipulate html files in the server side, by the command load
+   - it returns an JSON object to manipulate
+   
  + commander.js
    - https://github.com/visionmedia/commander.js
    - http://tjholowaychuk.com/post/9103188408/commander-js-nodejs-command-line-interfaces-made-easy
+   - this is a module to interact with the command line and node.js
 
  + JSON
    - http://en.wikipedia.org/wiki/JSON
    - https://developer.mozilla.org/en-US/docs/JSON
    - https://developer.mozilla.org/en-US/docs/JSON#JSON_in_Firefox_2
+   - JSON is an object with method to seriaize(stringify) and deserialize (parse)
 */
 
 var fs = require('fs');
@@ -35,22 +39,25 @@ var assertFileExists = function(infile) {
     }
     return instr;
 };
+/* This method is used to return an Object to manipulate*/
 
 var cheerioHtmlFile = function(htmlfile) {
     return cheerio.load(fs.readFileSync(htmlfile));
 };
 
+/*This function reads the JSON file specified and returns it deserialized*/
 var loadChecks = function(checksfile) {
+     
     return JSON.parse(fs.readFileSync(checksfile));
 };
-
+/*8*/
 var checkHtmlFile = function(htmlfile, checksfile) {
-    $ = cheerioHtmlFile(htmlfile);
-    var checks = loadChecks(checksfile).sort();
-    var out = {};
-    for(var ii in checks) {
-        var present = $(checks[ii]).length > 0;
-        out[checks[ii]] = present;
+    $ = cheerioHtmlFile(htmlfile);// first get the HTML object to manipulate
+    var checks = loadChecks(checksfile).sort();//Load de JSON which is an array
+    var out = {};//Create an object called out 
+    for(var ii in checks) {// checks in the array starting from index 0
+        var present = $(checks[ii]).length > 0;//this is a boolean comparission
+        out[checks[ii]] = present;// assigns true or false to the key in the object
     }
     return out;
 };
