@@ -25,11 +25,36 @@ References:
    - JSON is an object with method to seriaize(stringify) and deserialize (parse)
 */
 
+
+
+/*the program is not working for  URL reading yet*/
+
 var fs = require('fs');
 var program = require('commander');
 var cheerio = require('cheerio');
 var HTMLFILE_DEFAULT = "index.html";
 var CHECKSFILE_DEFAULT = "checks.json";
+var rest=require('restler'); 
+var URL_DEFAULT="http://google.com";
+var util=require('util');
+
+/*var assertUrlExists=function(url){
+    var resultHTML=function(result,response){
+	if(result instanceof Error){
+	    console.error('Errorsimo : ' + util.format(response.message));
+	    proccess.exit(1);
+	}
+
+	return result;
+    };
+
+return rest.get(url).on('complete',resultHTML);
+
+//the restler object runs the get method to get the URL especified
+// the 'on' specifies when 'complete' run resultHTML function
+
+};*/
+
 
 var assertFileExists = function(infile) {
     var instr = infile.toString();
@@ -50,10 +75,11 @@ var loadChecks = function(checksfile) {
      
     return JSON.parse(fs.readFileSync(checksfile));
 };
-/*8*/
+
 var checkHtmlFile = function(htmlfile, checksfile) {
-    $ = cheerioHtmlFile(htmlfile);// first get the HTML object to manipulate
-    var checks = loadChecks(checksfile).sort();//Load de JSON which is an array
+    $ = cheerioHtmlFile(htmlfile);// first get the HTML object to manipulate, it turns it from string to an object
+   /* $ = cheerioHtmlFile(urlFile);// not working as it seems the return of the restler.get is not a string */
+    var checks = loadChecks(checksfile).sort();//Load de JSON which is an array, it is just a file with an array, there is no JSON files.
     var out = {};//Create an object called out 
     for(var ii in checks) {// checks in the array starting from index 0
         var present = $(checks[ii]).length > 0;//this is a boolean comparission
@@ -71,7 +97,8 @@ var clone = function(fn) {
 if(require.main == module) {
     program
         .option('-c, --checks <check_file>', 'Path to checks.json', clone(assertFileExists), CHECKSFILE_DEFAULT)
-        .option('-f, --file <html_file>', 'Path to index.html', clone(assertFileExists), HTMLFILE_DEFAULT)
+.option('-f, --file <html_file>', 'Path to index.html', clone(assertFileExists), HTMLFILE_DEFAULT)
+/*.option('-u --url <url_to_file>','URL to file',clone(assertUrlExists),URL_DEFAULT)*/
         .parse(process.argv);
     var checkJson = checkHtmlFile(program.file, program.checks);
     var outJson = JSON.stringify(checkJson, null, 4);
